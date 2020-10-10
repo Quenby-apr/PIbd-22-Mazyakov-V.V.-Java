@@ -8,9 +8,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class Buttons {
-    public Cruiser ship;
+    public ITransport ship;
     int countCannon = 2;
-    JButton Create_button = new JButton("Создать");
+    int typeCannon = 1;
+    JButton CreateMilShip_button = new JButton("Создать военный корабль");
+    JButton CreateCruiser_button = new JButton("Создать крейсер");
     BufferedImage buttonIconup = ImageIO.read(new File("up.png"));
     BufferedImage buttonIconleft = ImageIO.read(new File("left.png"));
     BufferedImage buttonIcondown = ImageIO.read(new File("down.png"));
@@ -19,20 +21,33 @@ public class Buttons {
     JButton buttonLeft = new JButton(new ImageIcon(buttonIconleft));
     JButton buttonDown = new JButton(new ImageIcon(buttonIcondown));
     JButton buttonRight = new JButton(new ImageIcon(buttonIconright));
-    String[] comboBoxItems = {"Two", "Four", "Six"};
-    JComboBox<String> countCannonBox = new JComboBox(comboBoxItems);
+    String[] comboBoxItemsCount = {"Two", "Four", "Six"};
+    String[] comboBoxItemsType = {"First", "Second", "Third"};
+    JComboBox<String> countCannonBox = new JComboBox(comboBoxItemsCount);
+    JComboBox<String> typeCannonBox = new JComboBox(comboBoxItemsType);
     Otrisovka otr = new Otrisovka();
 
     public Buttons() throws IOException {
     }
 
     public void buttons() throws IOException {
-        Create_button.addActionListener(new ActionListener() {
+        CreateMilShip_button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ship = new MilShip(100 + (int) (Math.random() * 200), 500 + (int) (Math.random() * 300), Color.GRAY);
+                ship.setPosition(150 + (int) (Math.random() * 50), 150 + (int) (Math.random() * 50));
+                otr.setMilShip((MilShip) ship);
+                otr.setShip(null);
+                Main.frame.repaint();
+            }
+        });
+
+        CreateCruiser_button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ship = new Cruiser(100 + (int) (Math.random() * 200), 500 + (int) (Math.random() * 300), Color.GRAY,
-                        Color.RED, true, true, true, countCannon);
+                        Color.RED, true, true, true, countCannon, typeCannon);
                 ship.setPosition(150 + (int) (Math.random() * 50), 150 + (int) (Math.random() * 50));
-                otr.setShip(ship);
+                otr.setShip((Cruiser) ship);
+                otr.setMilShip(null);
                 Main.frame.repaint();
             }
         });
@@ -70,6 +85,20 @@ public class Buttons {
                     countCannon = 4;
                 } else if (countCannonBox.getSelectedItem().equals("Six")) {
                     countCannon = 6;
+                }
+            }
+        });
+        typeCannonBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (typeCannonBox.getSelectedItem().equals("First")) {
+                    typeCannon = 1;
+                }
+                if (typeCannonBox.getSelectedItem().equals("Second")) {
+                    typeCannon = 2;
+                }
+                if (typeCannonBox.getSelectedItem().equals("Third")) {
+                    typeCannon = 3;
                 }
             }
         });

@@ -39,13 +39,15 @@ public class Main {
         panel.setBounds(0, 0, 1500, 1400);
         frame.getContentPane().add(panel);
 
-        bt.Create_button.setBounds(10, 10, 100, 20);
+        bt.CreateMilShip_button.setBounds(10, 10, 200, 20);
+        bt.CreateCruiser_button.setBounds(220, 10, 200, 20);
         bt.buttonUp.setBounds(920, 500, 30, 30);
         bt.buttonLeft.setBounds(880, 550, 30, 30);
         bt.buttonDown.setBounds(920, 550, 30, 30);
         bt.buttonRight.setBounds(960, 550, 30, 30);
 
-        frame.getContentPane().add(bt.Create_button);
+        frame.getContentPane().add(bt.CreateMilShip_button);
+        frame.getContentPane().add(bt.CreateCruiser_button);
         frame.getContentPane().add(bt.buttonUp);
         frame.getContentPane().add(bt.buttonLeft);
         frame.getContentPane().add(bt.buttonDown);
@@ -55,5 +57,8 @@ public class Main {
         frame.add(bt.countCannonBox);
         frame.setLayout(null);
         frame.setVisible(true);
+
+        bt.typeCannonBox.setBounds(900, 50, 90, 20);
+        frame.add(bt.typeCannonBox);
     }
 }
