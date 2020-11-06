@@ -5,6 +5,8 @@ public abstract class Vehicle implements ITransport {
     protected int startPosY;
     protected int shipWidth;
     protected int shipHeight;
+    protected int pictureWidth;
+    protected int pictureHeight;
 
     public int maxSpeed;
 
@@ -24,13 +26,15 @@ public abstract class Vehicle implements ITransport {
         return mainColor;
     }
 
-    public void setPosition(int x, int y) {
+    public void setPosition(int x, int y, int pictureWidth, int pictureHeight) {
         startPosX = x;
         startPosY = y;
+        this.pictureWidth = pictureWidth;
+        this.pictureHeight = pictureHeight;
+
     }
 
     public abstract void drawTransport(Graphics g);
 
     public abstract void moveTransport(Direction direction);
-
 }

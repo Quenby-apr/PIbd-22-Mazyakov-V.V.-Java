@@ -10,8 +10,7 @@ public class MilShip extends Vehicle {
         this.mainColor = mainColor;
     }
 
-    protected MilShip(int maxSpeed, float weight, Color mainColor, int shipWidth, int
-            shipHeight) {
+    protected MilShip(int maxSpeed, float weight, Color mainColor, int shipWidth, int shipHeight) {
         this.maxSpeed = maxSpeed;
         this.weight = weight;
         this.mainColor = mainColor;

@@ -27,9 +27,9 @@ public class Cruiser extends MilShip {
 
     private int CountCannon;
     private int TypeCannon;
-    DrawFirstCannon dfc;
-    DrawSecondCannon dsc;
-    DrawThirdCannon dtc;
+    DrawFirstAddition dfc;
+    DrawSecondAddition dsc;
+    DrawThirdAddition dtc;
 
     public Cruiser(int maxSpeed, float weight, Color mainColor, Color dopColor,
                    boolean missileSystem, boolean antiaircraftComplex, boolean controlSystem, int countCannon, int typeCannon) {
@@ -45,15 +45,16 @@ public class Cruiser extends MilShip {
         TypeCannon = typeCannon;
         switch (typeCannon) {
             case 1:
-                dfc = new DrawFirstCannon(countCannon);
+                dfc = new DrawFirstAddition(countCannon, dopColor);
                 break;
             case 2:
-                dsc = new DrawSecondCannon(countCannon);
+                dsc = new DrawSecondAddition(countCannon, dopColor);
                 break;
             case 3:
-                dtc = new DrawThirdCannon(countCannon);
+                dtc = new DrawThirdAddition(countCannon, dopColor);
                 break;
         }
+
     }
 
     public void drawShip(Graphics g) {
