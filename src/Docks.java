@@ -1,7 +1,11 @@
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Docks<T extends ITransport, IAddition> {
-    private final Object[] places;
+    private final List<T> places;
+    //private final Object[] places;
+    private final int countPlaces;
     private final int pictureWidth;
     private final int pictureHeight;
     private final int placeSizeWidth = 280;
@@ -12,55 +16,39 @@ public class Docks<T extends ITransport, IAddition> {
         this.pictureHeight = picHeight;
         int width = picWidth / placeSizeWidth;
         int height = picHeight / placeSizeHeight;
-        places = new Object[width * height];
+        countPlaces = width*height;
+        places = new ArrayList<>();
+
+        //places = new Object[width * height];
     }
 
     public boolean add(T ship) {
-        for (int i = 0; i < places.length; i++) {
-            if (places[i] == null) {
-                places[i] = ship;
-                ship.setPosition(((i / 7) % 3) * placeSizeWidth + placeSizeWidth / 10, (i % 7) * placeSizeHeight + placeSizeHeight - 2, pictureWidth, pictureHeight);
-                return true;
-            }
+        if (places.size() < countPlaces)
+        {
+            places.add(ship);
+            return true;
         }
         return false;
     }
 
     public T delete(int index) {
-        if (index >= 0 && index < places.length && places[index] != null) {
-            Object ship = places[index];
-            places[index] = null;
-            return ((T) ship);
-        } else {
-            return null;
+        if (index >= 0 && index < countPlaces && places.get(index) != null)
+        {
+            T ship = places.get(index);
+            places.remove(index);
+            return ship;
         }
+        return null;
     }
 
-    public boolean MoreOrEquals(int countForCompare) {
-        int count = 0;
-        for (int i = 0; i < places.length; i++) {
-            if (places[i] != null) {
-                count++;
-            }
-        }
-        return (countForCompare >= count);
-    }
-
-    public boolean LessOrEquals(int countForCompare) {
-        int count = 0;
-        for (int i = 0; i < places.length; i++) {
-            if (places[i] != null) {
-                count++;
-            }
-        }
-        return (countForCompare <= count);
-    }
 
     public void draw(Graphics g) {
         drawMarking(g);
-        for (int i = 0; i < places.length; i++) {
-            if (places[i] != null) {
-                T place = (T) places[i];
+        for (int i = 0; i < places.size(); i++) {
+            if (places.get(i) != null) {
+                T place = (T) places.get(i);
+                place.setPosition(((i / 7) % 3) * placeSizeWidth + placeSizeWidth / 10, (i % 7) * placeSizeHeight + placeSizeHeight - 2, pictureWidth, pictureHeight);
+                System.out.println("рисует");
                 place.drawTransport(g);
                 if (place instanceof Cruiser) {
                     ((Cruiser) place).drawShip(g);
@@ -86,5 +74,11 @@ public class Docks<T extends ITransport, IAddition> {
             g2.drawLine(i * placeSizeWidth, 0, i * placeSizeWidth,
                     (pictureHeight / placeSizeHeight) * placeSizeHeight);
         }
+    }
+    public T get(int index) {
+        if (index >= 0 && index < places.size()) {
+            return places.get(index);
+        }
+        return null;
     }
 }

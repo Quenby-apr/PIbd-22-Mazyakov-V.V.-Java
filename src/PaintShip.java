@@ -20,6 +20,9 @@ public class PaintShip extends JPanel {
     public void paint(Graphics g) {
         if (ship != null) {
             ship.drawTransport(g);
+            if (ship instanceof  Cruiser) {
+                ((Cruiser) ship).drawShip(g);
+            }
         }
     }
 }

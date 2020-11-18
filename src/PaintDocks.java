@@ -2,16 +2,24 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PaintDocks extends JPanel {
-    private final Docks<ITransport, IAddition> docks;
+    private DocksCollection docksCollection;
+    private String definedDocks = null;
 
-    public PaintDocks(Docks<ITransport, IAddition> docks) {
-        this.docks = docks;
+    public PaintDocks(DocksCollection docksCollection) {
+        this.docksCollection = docksCollection;
     }
 
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        if (docks != null) {
-            docks.draw(g2);
+        if (definedDocks != null) {
+            if (docksCollection != null) {
+                docksCollection.get(definedDocks).draw(g2);
+            }
         }
     }
+
+    public void setDefinedDocks(String definedDocks) {
+        this.definedDocks = definedDocks;
+    }
 }
+
