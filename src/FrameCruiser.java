@@ -7,8 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
-
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 public class FrameCruiser {
     private JFrame frame;
     public ITransport ship;
@@ -31,7 +30,7 @@ public class FrameCruiser {
     public FrameCruiser() throws IOException {
         frame = new JFrame();
         frame.setBounds(0, 0, 1270, 680);
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         frame.getContentPane().setLayout(null);
 
         buttonUp.setBounds(920, 500, 30, 30);

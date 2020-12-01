@@ -4,7 +4,6 @@ import java.util.List;
 
 public class Docks<T extends ITransport, IAddition> {
     private final List<T> places;
-    //private final Object[] places;
     private final int countPlaces;
     private final int pictureWidth;
     private final int pictureHeight;
@@ -18,8 +17,6 @@ public class Docks<T extends ITransport, IAddition> {
         int height = picHeight / placeSizeHeight;
         countPlaces = width*height;
         places = new ArrayList<>();
-
-        //places = new Object[width * height];
     }
 
     public boolean add(T ship) {
@@ -48,7 +45,6 @@ public class Docks<T extends ITransport, IAddition> {
             if (places.get(i) != null) {
                 T place = (T) places.get(i);
                 place.setPosition(((i / 7) % 3) * placeSizeWidth + placeSizeWidth / 10, (i % 7) * placeSizeHeight + placeSizeHeight - 2, pictureWidth, pictureHeight);
-                System.out.println("рисует");
                 place.drawTransport(g);
                 if (place instanceof Cruiser) {
                     ((Cruiser) place).drawShip(g);

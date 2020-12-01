@@ -14,8 +14,7 @@ public class FrameDocks {
     private JFrame frame;
     private Queue<MilShip> shipQueue;
     private DocksCollection docksCollection;
-    private JButton CreateMilShip_button = new JButton("Причалить военный корабль");
-    private JButton CreateCruiser_button = new JButton("Причалить крейсер");
+    private JButton CreateShip_button = new JButton("Причалить корабль");
     private JButton moveToQueue_button = new JButton("Поместить в очередь");
     private JButton takeFromQueue_button = new JButton("Взять из очереди");
     private JTextField fieldIndex = new JTextField("");
@@ -40,8 +39,7 @@ public class FrameDocks {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
 
-        CreateMilShip_button.setBounds(870, 30 + 300, 210, 20);
-        CreateCruiser_button.setBounds(870, 90 + 300, 210, 20);
+        CreateShip_button.setBounds(870, 30 + 300, 210, 20);
         moveToQueue_button.setBounds(870, 200 + 300, 210, 20);
         takeFromQueue_button.setBounds(870, 230 + 300, 210, 20);
         paintDocks.setBounds(0, 0, 860, 620);
@@ -54,8 +52,7 @@ public class FrameDocks {
         removeDock_button.setBounds(870, 290, 210, 20);
 
 
-        frame.getContentPane().add(CreateMilShip_button);
-        frame.getContentPane().add(CreateCruiser_button);
+        frame.getContentPane().add(CreateShip_button);
         frame.getContentPane().add(moveToQueue_button);
         frame.getContentPane().add(takeFromQueue_button);
         frame.getContentPane().add(paintDocks);
@@ -69,49 +66,21 @@ public class FrameDocks {
     }
 
     public void buttonsDocks() throws IOException {
-        CreateMilShip_button.addActionListener(new ActionListener() {
+        CreateShip_button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (listBoxDocks.getSelectedIndex() >= 0) {
-                    JColorChooser colorDialog = new JColorChooser();
-                    JOptionPane.showMessageDialog(frame, colorDialog);
-                    if (colorDialog.getColor() != null) {
-                        MilShip ship = new MilShip(100 + (int) (Math.random() * 200), 500 + (int) (Math.random() * 300), colorDialog.getColor());
-                        if (docksCollection.get(listBoxDocks.getSelectedValue()).add(ship)) {
-                            System.out.println("added");
+                    FrameShipConfig shipConfig = new FrameShipConfig(frame);
+                        if (docksCollection.get(listBoxDocks.getSelectedValue()).add(shipConfig.getShip())) {
                             frame.repaint();
                         } else {
                             JOptionPane.showMessageDialog(frame, "Доки переполнены");
                         }
-                    }
                 } else {
                     JOptionPane.showMessageDialog(frame, "Док не выбран", "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        CreateCruiser_button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (listBoxDocks.getSelectedIndex() >= 0) {
-                    JColorChooser colorDialog = new JColorChooser();
-                    JOptionPane.showMessageDialog(frame, colorDialog);
-                    if (colorDialog.getColor() != null) {
-                        JColorChooser otherColorDialog = new JColorChooser();
-                        JOptionPane.showMessageDialog(frame, otherColorDialog);
-                        if (otherColorDialog.getColor() != null) {
-                            Cruiser ship = new Cruiser(100 + (int) (Math.random() * 200), 500 + (int) (Math.random() * 300), colorDialog.getColor(), otherColorDialog.getColor(),
-                                    true, true, true, 4, 2);
-                            if (docksCollection.get(listBoxDocks.getSelectedValue()).add(ship)) {
-                                frame.repaint();
-                            } else {
-                                JOptionPane.showMessageDialog(frame, "Доки переполнены");
-                            }
-                        }
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Док не выбран", "Ошибка", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
 
         moveToQueue_button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

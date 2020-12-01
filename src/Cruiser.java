@@ -25,11 +25,11 @@ public class Cruiser extends MilShip {
         return ControlSystem;
     }
 
+    private IAddition additions;
+
     private int CountCannon;
     private int TypeCannon;
-    DrawFirstAddition dfc;
-    DrawSecondAddition dsc;
-    DrawThirdAddition dtc;
+
 
     public Cruiser(int maxSpeed, float weight, Color mainColor, Color dopColor,
                    boolean missileSystem, boolean antiaircraftComplex, boolean controlSystem, int countCannon, int typeCannon) {
@@ -45,31 +45,22 @@ public class Cruiser extends MilShip {
         TypeCannon = typeCannon;
         switch (typeCannon) {
             case 1:
-                dfc = new DrawFirstAddition(countCannon, dopColor);
+                additions = new DrawFirstAddition(countCannon, dopColor);
                 break;
             case 2:
-                dsc = new DrawSecondAddition(countCannon, dopColor);
+                additions = new DrawSecondAddition(countCannon, dopColor);
                 break;
             case 3:
-                dtc = new DrawThirdAddition(countCannon, dopColor);
+                additions = new DrawThirdAddition(countCannon, dopColor);
                 break;
         }
 
     }
 
     public void drawShip(Graphics g) {
-        switch (TypeCannon) {
-            case 1:
-                dfc.drawAdditional(g, startPosX, startPosY);
-                break;
-            case 2:
-                dsc.drawAdditional(g, startPosX, startPosY);
-                break;
-            case 3:
-                dtc.drawAdditional(g, startPosX, startPosY);
-                break;
+        if (additions!=null) {
+            additions.drawAdditional(g, startPosX, startPosY);
         }
-
         super.drawTransport(g);
         if (AntiaircraftComplex) {
             g.setColor(DopColor);
@@ -82,5 +73,17 @@ public class Cruiser extends MilShip {
             g.fillRect(startPosX + 6, startPosY - 50, 12, 10);
             g.fillOval(startPosX + 6, startPosY - 60, 12, 10);
         }
+    }
+    public void setDopColor(Color color)
+    {
+        DopColor = color;
+    }
+
+    public void setAdditions(IAddition additions) {
+        this.additions = additions;
+    }
+
+    public IAddition getAdditions() {
+        return additions;
     }
 }

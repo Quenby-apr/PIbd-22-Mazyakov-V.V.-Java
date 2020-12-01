@@ -37,4 +37,8 @@ public abstract class Vehicle implements ITransport {
     public abstract void drawTransport(Graphics g);
 
     public abstract void moveTransport(Direction direction);
+
+    public void setMainColor(Color mainColor) {
+        this.mainColor = mainColor;
+    }
 }
