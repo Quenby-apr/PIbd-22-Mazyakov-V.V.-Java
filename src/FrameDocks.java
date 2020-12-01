@@ -30,7 +30,6 @@ public class FrameDocks {
 
     public FrameDocks() {
         shipQueue = new LinkedList<>();
-
         docksCollection = new DocksCollection(900, 620);
         paintDocks = new PaintDocks(docksCollection);
         frame = new JFrame();
@@ -81,7 +80,6 @@ public class FrameDocks {
                 }
             }
         });
-
 
         moveToQueue_button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
