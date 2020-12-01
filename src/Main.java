@@ -5,5 +5,4 @@ public class Main {
         FrameDocks butDocks = new FrameDocks();
         butDocks.buttonsDocks();
     }
-
 }

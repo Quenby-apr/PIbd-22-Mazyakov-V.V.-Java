@@ -18,7 +18,6 @@ public class FrameShipConfig extends JDialog {
         super(frame, true);
         setSize(1150, 620);
         setLayout(null);
-
         //тип корабля
         JLabel labelType = new JLabel("Тип корабля");
         labelType.setBounds(50, 10, 100, 20);
@@ -95,8 +94,6 @@ public class FrameShipConfig extends JDialog {
         getContentPane().add(checkBoxMissileSystem);
         getContentPane().add(checkBoxAntiaircraftComplex);
         getContentPane().add(checkBoxControlSystem);
-
-
         labelCruiser.addMouseListener(listenerTypes);
         labelMilShip.addMouseListener(listenerTypes);
         add(labelType);
@@ -108,6 +105,7 @@ public class FrameShipConfig extends JDialog {
         getContentPane().add(paintShip);
         paintShip.setBounds(350, 40, 400, 180);
         paintShip.setBorder(BorderFactory.createLineBorder(Color.BLACK, 10));
+        paintShip.setShip(null);
 
         //цвета
         JLabel labelColors = new JLabel("Цвета");
@@ -164,7 +162,7 @@ public class FrameShipConfig extends JDialog {
                         if (paintShip.getShip().getAdditions()!=null) {
                             switch (numberAdditions) {
                                 case 1: additions = new DrawFirstAddition((Integer) spinnerCountCannon.getValue(), shipColor);
-                                break;
+                                    break;
                                 case 2: additions = new DrawSecondAddition((Integer) spinnerCountCannon.getValue(), shipColor);
                                     break;
                                 case 3: additions = new DrawThirdAddition((Integer) spinnerCountCannon.getValue(), shipColor);
@@ -280,7 +278,6 @@ public class FrameShipConfig extends JDialog {
         labelAdditionsThird.setBounds(900, 200, 190, 55);
         labelAdditionsThird.setHorizontalAlignment(SwingConstants.CENTER);
 
-
         getContentPane().add(labelAdditions);
         getContentPane().add(labelAdditionsFirst);
         getContentPane().add(labelAdditionsSecond);
@@ -318,6 +315,7 @@ public class FrameShipConfig extends JDialog {
                             e.getY() + ((JComponent) e.getSource()).getY() >= paintShip.getY() &&
                             e.getY() + ((JComponent) e.getSource()).getY() <= paintShip.getY() + paintShip.getHeight() &&
                             ship instanceof Cruiser) {
+                        ((Cruiser) ship).setTypeCannon(numberAdditions);
                         ((Cruiser) ship).setAdditions(additions);
                         paintShip.getShip().setAdditions(additions);
                         repaint();

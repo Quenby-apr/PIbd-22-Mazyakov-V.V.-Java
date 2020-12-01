@@ -1,11 +1,17 @@
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
 public class DocksCollection {
     private final Map<String, Docks<MilShip, IAddition>> docksStages;
     private final int frameWidth;
     private final int frameHeight;
+    private final String separator = ":";
 
     public DocksCollection(int frameWidth, int frameHeight) {
         docksStages = new HashMap<>();
@@ -39,5 +45,125 @@ public class DocksCollection {
             return docksStages.get(name).get(index);
         }
         return null;
+    }
+
+    public boolean saveData(String filename) {
+        if (!filename.contains(".txt")) {
+            filename += ".txt";
+        }
+        try (FileWriter fileWriter = new FileWriter(filename, false)) {
+            fileWriter.write("DocksCollection\n");
+            for (Map.Entry<String, Docks<MilShip, IAddition>> level : docksStages.entrySet()) {
+                fileWriter.write("Dock" + separator + level.getKey() + "\n");
+                MilShip ship;
+                for (int i = 0; (ship = level.getValue().get(i)) != null; i++) {
+                    if (ship.getClass().getSimpleName().equals("MilShip")) {
+                        fileWriter.write("MilitaryShip" + separator);
+                    } else if (ship.getClass().getSimpleName().equals("Cruiser")) {
+                        fileWriter.write("Cruiser" + separator);
+                    }
+                    fileWriter.write(ship.toString() + "\n");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public boolean loadData(String filename) {
+        if (!(new File(filename).exists())) {
+            return false;
+        }
+        try (FileReader fileReader = new FileReader(filename)) {
+            Scanner scanner = new Scanner(fileReader);
+            if (scanner.nextLine().contains("DocksCollection")) {
+                docksStages.clear();
+            } else {
+                return false;
+            }
+            MilShip ship = null;
+            String key = "";
+            String line;
+            while (scanner.hasNextLine()) {
+                line = scanner.nextLine();
+                if (line.contains("Dock:")) {
+                    key = line.split(separator)[1];
+                    docksStages.put(key, new Docks<>(frameWidth, frameHeight));
+                } else if (line.contains(separator)) {
+                    if (line.contains("MilitaryShip")) {
+                        ship = new MilShip(line.split(separator)[1]);
+                    } else if (line.contains("Cruiser")) {
+                        ship = new Cruiser(line.split(separator)[1]);
+                    }
+                    if (!(docksStages.get(key).add(ship))) {
+                        return false;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public boolean saveDocks(String filename, String key) {
+        if (docksStages.containsKey(key)) {
+            if (!filename.contains(".txt")) {
+                filename += ".txt";
+            }
+            try (FileWriter fileWriter = new FileWriter(filename, false)) {
+                fileWriter.write("Docks" + separator + key + "\n");
+                MilShip ship;
+                for (int i = 0; (ship = docksStages.get(key).get(i)) != null; i++) {
+                    if (ship.getClass().getSimpleName().equals("MilShip")) {
+                        fileWriter.write("MilitaryShip" + separator);
+                    } else if (ship.getClass().getSimpleName().equals("Cruiser")) {
+                        fileWriter.write("Cruiser" + separator);
+                    }
+                    fileWriter.write(ship.toString() + "\n");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean loadDocks(String filename) {
+        try (FileReader fileReader = new FileReader(filename)) {
+            Scanner scanner = new Scanner(fileReader);
+            String key;
+            String line;
+            line = scanner.nextLine();
+            if (line.contains("Docks:")) {
+                key = line.split(separator)[1];
+                if (docksStages.containsKey(key)) {
+                    docksStages.get(key).clearList();
+                } else {
+                    docksStages.put(key, new Docks<>(frameWidth, frameHeight));
+                }
+            } else {
+                return false;
+            }
+            MilShip ship = null;
+            while (scanner.hasNextLine()) {
+                line = scanner.nextLine();
+                if (line.contains(separator)) {
+                    if (line.contains("MilitaryShip")) {
+                        ship = new MilShip(line.split(separator)[1]);
+                    } else if (line.contains("Cruiser")) {
+                        ship = new Cruiser(line.split(separator)[1]);
+                    }
+                    if (!(docksStages.get(key).add(ship))) {
+                        return false;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

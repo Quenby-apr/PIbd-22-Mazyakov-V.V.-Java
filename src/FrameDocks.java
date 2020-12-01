@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -28,9 +29,16 @@ public class FrameDocks {
     private JButton addDock_button = new JButton("Добавить док");
     private JButton removeDock_button = new JButton("Удалить док");
 
+    JMenuBar menuBar = new JMenuBar();
+    JMenu fileMenu = new JMenu("Файл");
+    JMenuItem saveData = new JMenuItem("Сохранить");
+    JMenuItem loadData = new JMenuItem("Загрузить");
+    JMenu docksMenu = new JMenu("Отдельный док");
+    JMenuItem saveDocks = new JMenuItem("Сохранить док");
+    JMenuItem loadDocks = new JMenuItem("Загрузить док");
+
     public FrameDocks() {
         shipQueue = new LinkedList<>();
-
         docksCollection = new DocksCollection(900, 620);
         paintDocks = new PaintDocks(docksCollection);
         frame = new JFrame();
@@ -63,6 +71,14 @@ public class FrameDocks {
         frame.getContentPane().add(addDock_button);
         frame.getContentPane().add(listBoxDocks);
         frame.getContentPane().add(removeDock_button);
+
+        fileMenu.add(saveData);
+        fileMenu.add(loadData);
+        docksMenu.add(saveDocks);
+        docksMenu.add(loadDocks);
+        menuBar.add(fileMenu);
+        menuBar.add(docksMenu);
+        frame.setJMenuBar(menuBar);
     }
 
     public void buttonsDocks() throws IOException {
@@ -70,11 +86,11 @@ public class FrameDocks {
             public void actionPerformed(ActionEvent e) {
                 if (listBoxDocks.getSelectedIndex() >= 0) {
                     FrameShipConfig shipConfig = new FrameShipConfig(frame);
-                        if (docksCollection.get(listBoxDocks.getSelectedValue()).add(shipConfig.getShip())) {
-                            frame.repaint();
-                        } else {
-                            JOptionPane.showMessageDialog(frame, "Доки переполнены");
-                        }
+                    if (docksCollection.get(listBoxDocks.getSelectedValue()).add(shipConfig.getShip())) {
+                        frame.repaint();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Доки переполнены");
+                    }
                 } else {
                     JOptionPane.showMessageDialog(frame, "Док не выбран", "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
@@ -147,6 +163,74 @@ public class FrameDocks {
             }
         });
 
+        saveData.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileSaveDialog = new JFileChooser();
+                fileSaveDialog.setFileFilter(new FileNameExtensionFilter(null, "txt"));
+                int result = fileSaveDialog.showSaveDialog(frame);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    if (docksCollection.saveData(fileSaveDialog.getSelectedFile().getPath())) {
+                        JOptionPane.showMessageDialog(frame, "Файл сохранился", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Файл не сохранился", "Результат", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        loadData.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileOpenDialog = new JFileChooser();
+                fileOpenDialog.setFileFilter(new FileNameExtensionFilter(null, "txt"));
+                int result = fileOpenDialog.showSaveDialog(frame);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    if (docksCollection.loadData(fileOpenDialog.getSelectedFile().getPath())) {
+                        JOptionPane.showMessageDialog(frame, "Файл загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                        reloadLevels();
+                        frame.repaint();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Файл не загружен", "Результат", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        saveDocks.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileSaveDialog = new JFileChooser();
+                fileSaveDialog.setFileFilter(new FileNameExtensionFilter(null, "txt"));
+                if (listBoxDocks.getSelectedValue() == null) {
+                    return;
+                }
+                int result = fileSaveDialog.showSaveDialog(frame);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    if (docksCollection.saveDocks(fileSaveDialog.getSelectedFile().getPath(),listBoxDocks.getSelectedValue())) {
+                        JOptionPane.showMessageDialog(frame, "Док сохранился", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Док не сохранился", "Результат", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        loadDocks.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileOpenDialog = new JFileChooser();
+                fileOpenDialog.setFileFilter(new FileNameExtensionFilter(null, "txt"));
+                int result = fileOpenDialog.showSaveDialog(frame);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    if (docksCollection.loadDocks(fileOpenDialog.getSelectedFile().getPath())) {
+                        JOptionPane.showMessageDialog(frame, "Док загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                        reloadLevels();
+                        frame.repaint();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Док не загружен", "Результат", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+
         listBoxDocks.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
@@ -158,7 +242,6 @@ public class FrameDocks {
 
     private void reloadLevels() {
         int index = listBoxDocks.getSelectedIndex();
-
         docksList.removeAllElements();
         int i = 0;
         for (String name : docksCollection.keySet()) {

@@ -3,11 +3,25 @@ import java.awt.*;
 public class MilShip extends Vehicle {
     protected int pictureWidth = 1010;
     protected int pictureHeight = 620;
+    protected final String separator = ";";
 
     public MilShip(int maxSpeed, float weight, Color mainColor) {
         this.maxSpeed = maxSpeed;
         this.weight = weight;
         this.mainColor = mainColor;
+    }
+
+    public MilShip(String info) {
+        String[] strs = info.split(String.valueOf(separator));
+        if (strs.length == 3) {
+            maxSpeed = Integer.parseInt(strs[0]);
+            weight = Float.parseFloat(strs[1]);
+            mainColor = new Color(Integer.parseInt(strs[2]));
+        }
+    }
+
+    public String toString() {
+        return maxSpeed + separator + weight + separator + mainColor.getRGB();
     }
 
     protected MilShip(int maxSpeed, float weight, Color mainColor, int shipWidth, int shipHeight) {

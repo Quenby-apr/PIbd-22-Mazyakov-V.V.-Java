@@ -38,7 +38,6 @@ public class Docks<T extends ITransport, IAddition> {
         return null;
     }
 
-
     public void draw(Graphics g) {
         drawMarking(g);
         for (int i = 0; i < places.size(); i++) {
@@ -76,5 +75,8 @@ public class Docks<T extends ITransport, IAddition> {
             return places.get(index);
         }
         return null;
+    }
+    public void clearList() {
+        places.clear();
     }
 }
