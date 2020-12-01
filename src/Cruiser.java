@@ -30,7 +30,6 @@ public class Cruiser extends MilShip {
     private int CountCannon;
     private int TypeCannon;
 
-
     public Cruiser(int maxSpeed, float weight, Color mainColor, Color dopColor,
                    boolean missileSystem, boolean antiaircraftComplex, boolean controlSystem, int countCannon, int typeCannon) {
         super(maxSpeed, weight, mainColor, 215, 35);
@@ -54,7 +53,6 @@ public class Cruiser extends MilShip {
                 additions = new DrawThirdAddition(countCannon, dopColor);
                 break;
         }
-
     }
 
     public void drawShip(Graphics g) {
