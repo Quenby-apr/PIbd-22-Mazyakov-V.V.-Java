@@ -95,8 +95,6 @@ public class FrameShipConfig extends JDialog {
         getContentPane().add(checkBoxMissileSystem);
         getContentPane().add(checkBoxAntiaircraftComplex);
         getContentPane().add(checkBoxControlSystem);
-
-
         labelCruiser.addMouseListener(listenerTypes);
         labelMilShip.addMouseListener(listenerTypes);
         add(labelType);
@@ -279,7 +277,6 @@ public class FrameShipConfig extends JDialog {
         labelAdditionsThird.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         labelAdditionsThird.setBounds(900, 200, 190, 55);
         labelAdditionsThird.setHorizontalAlignment(SwingConstants.CENTER);
-
 
         getContentPane().add(labelAdditions);
         getContentPane().add(labelAdditionsFirst);
