@@ -51,8 +51,9 @@ public class FrameDocks {
         listBoxDocks.setBounds(870, 130, 210, 150);
         removeDock_button.setBounds(870, 290, 210, 20);
 
-
         frame.getContentPane().add(CreateShip_button);
+        frame.getContentPane().add(CreateMilShip_button);
+        frame.getContentPane().add(CreateCruiser_button);
         frame.getContentPane().add(moveToQueue_button);
         frame.getContentPane().add(takeFromQueue_button);
         frame.getContentPane().add(paintDocks);
@@ -174,5 +175,3 @@ public class FrameDocks {
         }
     }
 }
-
-
