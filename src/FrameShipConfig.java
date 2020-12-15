@@ -159,13 +159,16 @@ public class FrameShipConfig extends JDialog {
                             ship instanceof Cruiser) {
                         Cruiser ship = paintShip.getShip();
                         (ship).setDopColor(shipColor);
-                        if (paintShip.getShip().getAdditions()!=null) {
+                        if (paintShip.getShip().getAdditions() != null) {
                             switch (numberAdditions) {
-                                case 1: additions = new DrawFirstAddition((Integer) spinnerCountCannon.getValue(), shipColor);
+                                case 1:
+                                    additions = new DrawFirstAddition((Integer) spinnerCountCannon.getValue(), shipColor);
                                     break;
-                                case 2: additions = new DrawSecondAddition((Integer) spinnerCountCannon.getValue(), shipColor);
+                                case 2:
+                                    additions = new DrawSecondAddition((Integer) spinnerCountCannon.getValue(), shipColor);
                                     break;
-                                case 3: additions = new DrawThirdAddition((Integer) spinnerCountCannon.getValue(), shipColor);
+                                case 3:
+                                    additions = new DrawThirdAddition((Integer) spinnerCountCannon.getValue(), shipColor);
                                     break;
                             }
                             paintShip.getShip().setAdditions(additions);
@@ -293,15 +296,15 @@ public class FrameShipConfig extends JDialog {
                     switch (labelAdditions.getText()) {
                         case "первый вид":
                             additions = new DrawFirstAddition((Integer) spinnerCountCannon.getValue(), paintShip.getShip().getDopColor());
-                            numberAdditions=1;
+                            numberAdditions = 1;
                             break;
                         case "второй вид":
                             additions = new DrawSecondAddition((Integer) spinnerCountCannon.getValue(), paintShip.getShip().getDopColor());
-                            numberAdditions=2;
+                            numberAdditions = 2;
                             break;
                         case "третий вид":
                             additions = new DrawThirdAddition((Integer) spinnerCountCannon.getValue(), paintShip.getShip().getDopColor());
-                            numberAdditions=3;
+                            numberAdditions = 3;
                             break;
                     }
                 }

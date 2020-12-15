@@ -15,27 +15,25 @@ public class Docks<T extends ITransport, IAddition> {
         this.pictureHeight = picHeight;
         int width = picWidth / placeSizeWidth;
         int height = picHeight / placeSizeHeight;
-        countPlaces = width*height;
+        countPlaces = width * height;
         places = new ArrayList<>();
     }
 
-    public boolean add(T ship) {
-        if (places.size() < countPlaces)
-        {
-            places.add(ship);
-            return true;
+    public boolean add(T ship) throws DocksOverflowException {
+        if (places.size() >= countPlaces) {
+            throw new DocksOverflowException();
         }
-        return false;
+        places.add(ship);
+        return true;
     }
 
-    public T delete(int index) {
-        if (index >= 0 && index < countPlaces && places.get(index) != null)
-        {
-            T ship = places.get(index);
-            places.remove(index);
-            return ship;
+    public T delete(int index) throws DocksNotFoundException {
+        if (index < 0 || index >= places.size()) {
+            throw new DocksNotFoundException(index);
         }
-        return null;
+        T ship = places.get(index);
+        places.remove(index);
+        return ship;
     }
 
     public void draw(Graphics g) {
@@ -70,12 +68,14 @@ public class Docks<T extends ITransport, IAddition> {
                     (pictureHeight / placeSizeHeight) * placeSizeHeight);
         }
     }
+
     public T get(int index) {
         if (index >= 0 && index < places.size()) {
             return places.get(index);
         }
         return null;
     }
+
     public void clearList() {
         places.clear();
     }

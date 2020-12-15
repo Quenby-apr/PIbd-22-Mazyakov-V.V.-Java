@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+
 public class FrameCruiser {
     private JFrame frame;
     public ITransport ship;

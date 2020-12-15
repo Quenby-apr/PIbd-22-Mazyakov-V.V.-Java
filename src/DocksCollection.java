@@ -1,7 +1,4 @@
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -71,16 +68,16 @@ public class DocksCollection {
         return true;
     }
 
-    public boolean loadData(String filename) {
+    public boolean loadData(String filename) throws Exception {
         if (!(new File(filename).exists())) {
-            return false;
+            throw new FileNotFoundException("Файл " + filename + " не найден!");
         }
         try (FileReader fileReader = new FileReader(filename)) {
             Scanner scanner = new Scanner(fileReader);
             if (scanner.nextLine().contains("DocksCollection")) {
                 docksStages.clear();
             } else {
-                return false;
+                throw new IllegalArgumentException("Файл " + filename + " содержит неверные значения");
             }
             MilShip ship = null;
             String key = "";
@@ -97,7 +94,7 @@ public class DocksCollection {
                         ship = new Cruiser(line.split(separator)[1]);
                     }
                     if (!(docksStages.get(key).add(ship))) {
-                        return false;
+                        throw new IndexOutOfBoundsException();
                     }
                 }
             }
@@ -145,7 +142,7 @@ public class DocksCollection {
                     docksStages.put(key, new Docks<>(frameWidth, frameHeight));
                 }
             } else {
-                return false;
+                throw new IllegalArgumentException("Файл " + filename + " содержит неверные значения");
             }
             MilShip ship = null;
             while (scanner.hasNextLine()) {
@@ -157,11 +154,11 @@ public class DocksCollection {
                         ship = new Cruiser(line.split(separator)[1]);
                     }
                     if (!(docksStages.get(key).add(ship))) {
-                        return false;
+                        throw new IndexOutOfBoundsException();
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | DocksOverflowException e) {
             e.printStackTrace();
         }
         return true;

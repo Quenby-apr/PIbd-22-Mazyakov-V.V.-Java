@@ -1,17 +1,25 @@
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.KeyException;
+import java.security.Provider;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
 
+
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class FrameDocks {
+    Logger logger;
     private JFrame frame;
     private Queue<MilShip> shipQueue;
     private DocksCollection docksCollection;
@@ -38,6 +46,8 @@ public class FrameDocks {
     JMenuItem loadDocks = new JMenuItem("Загрузить док");
 
     public FrameDocks() {
+        logger = Logger.getLogger(String.valueOf(FrameDocks.class));
+        PropertyConfigurator.configure("log4j2.properties");
         shipQueue = new LinkedList<>();
         docksCollection = new DocksCollection(900, 620);
         paintDocks = new PaintDocks(docksCollection);
@@ -85,14 +95,23 @@ public class FrameDocks {
         CreateShip_button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (listBoxDocks.getSelectedIndex() >= 0) {
-                    FrameShipConfig shipConfig = new FrameShipConfig(frame);
-                    if (docksCollection.get(listBoxDocks.getSelectedValue()).add(shipConfig.getShip())) {
-                        frame.repaint();
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Доки переполнены");
+                    try {
+                        FrameShipConfig shipConfig = new FrameShipConfig(frame);
+                        MilShip ship = shipConfig.getShip();
+                        if (ship == null) {
+                            return;
+                        }
+                        if (docksCollection.get(listBoxDocks.getSelectedValue()).add(shipConfig.getShip())) {
+                            logger.info("В док " + listBoxDocks.getSelectedValue() + " был добавлен корабль " + ship);
+                            frame.repaint();
+                        }
+                    } catch (DocksOverflowException ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Док переполнен", JOptionPane.ERROR_MESSAGE);
+                        logger.warn(ex.getMessage());
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+                        logger.fatal(ex.getMessage());
                     }
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Док не выбран", "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -105,16 +124,16 @@ public class FrameDocks {
                         MilShip ship = docksCollection.get(listBoxDocks.getSelectedValue()).delete(Integer.parseInt(fieldIndex.getText()));
                         if (ship != null) {
                             shipQueue.add(ship);
+                            logger.info("Из дока " + listBoxDocks.getSelectedValue() + " корабль " + ship + " помещен в очередь");
                             frame.repaint();
-                        } else {
-                            JOptionPane.showMessageDialog(frame, "Корабля на таком месте нет");
-
                         }
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(frame, "Корабля с таким местом нет");
+                    } catch (DocksNotFoundException ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Док не найден", JOptionPane.ERROR_MESSAGE);
+                        logger.warn(ex.getMessage());
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+                        logger.fatal(ex.getMessage());
                     }
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Док не выбран", "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -129,7 +148,9 @@ public class FrameDocks {
                         ex.printStackTrace();
                     }
                     assert frameCruiser != null;
-                    frameCruiser.setShip(Objects.requireNonNull(shipQueue.poll()));
+                    MilShip ship = shipQueue.poll();
+                    frameCruiser.setShip(ship);
+                    logger.info("Корабль " + ship + " был изъят из очереди");
                     frame.repaint();
                 }
             }
@@ -169,10 +190,14 @@ public class FrameDocks {
                 fileSaveDialog.setFileFilter(new FileNameExtensionFilter(null, "txt"));
                 int result = fileSaveDialog.showSaveDialog(frame);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    if (docksCollection.saveData(fileSaveDialog.getSelectedFile().getPath())) {
-                        JOptionPane.showMessageDialog(frame, "Файл сохранился", "Результат", JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Файл не сохранился", "Результат", JOptionPane.ERROR_MESSAGE);
+                    try {
+                        if (docksCollection.saveData(fileSaveDialog.getSelectedFile().getPath())) {
+                            JOptionPane.showMessageDialog(frame, "Файл сохранился", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                            logger.info("Данные сохранены в файл " + fileSaveDialog.getSelectedFile().getPath());
+                        }
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+                        logger.fatal(ex.getMessage());
                     }
                 }
             }
@@ -184,12 +209,24 @@ public class FrameDocks {
                 fileOpenDialog.setFileFilter(new FileNameExtensionFilter(null, "txt"));
                 int result = fileOpenDialog.showSaveDialog(frame);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    if (docksCollection.loadData(fileOpenDialog.getSelectedFile().getPath())) {
-                        JOptionPane.showMessageDialog(frame, "Файл загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
-                        reloadLevels();
-                        frame.repaint();
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Файл не загружен", "Результат", JOptionPane.ERROR_MESSAGE);
+                    try {
+                        if (docksCollection.loadData(fileOpenDialog.getSelectedFile().getPath())) {
+                            JOptionPane.showMessageDialog(frame, "Файл загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                            reloadLevels();
+                            frame.repaint();
+                        }
+                    } catch (DocksOverflowException ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Док переполнен", JOptionPane.ERROR_MESSAGE);
+                        logger.warn(ex.getMessage());
+                    } catch (FileNotFoundException ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Файл не найден", JOptionPane.ERROR_MESSAGE);
+                        logger.error(ex.getMessage());
+                    } catch (IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Некорректные данные", JOptionPane.ERROR_MESSAGE);
+                        logger.error(ex.getMessage());
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+                        logger.fatal(ex.getMessage());
                     }
                 }
             }
@@ -204,11 +241,16 @@ public class FrameDocks {
                 }
                 int result = fileSaveDialog.showSaveDialog(frame);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    if (docksCollection.saveDocks(fileSaveDialog.getSelectedFile().getPath(),listBoxDocks.getSelectedValue())) {
-                        JOptionPane.showMessageDialog(frame, "Док сохранился", "Результат", JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Док не сохранился", "Результат", JOptionPane.ERROR_MESSAGE);
+                    try {
+                        if (docksCollection.saveDocks(fileSaveDialog.getSelectedFile().getPath(), listBoxDocks.getSelectedValue())) {
+                            JOptionPane.showMessageDialog(frame, "Док сохранился", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                            logger.info("Док " + listBoxDocks.getSelectedValue() + " был записан в файл " + fileSaveDialog.getSelectedFile().getPath());
+                        }
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Неизвестная ошибка при сохранении", JOptionPane.ERROR_MESSAGE);
+                        logger.fatal(ex.getMessage());
                     }
+
                 }
             }
         });
@@ -219,13 +261,21 @@ public class FrameDocks {
                 fileOpenDialog.setFileFilter(new FileNameExtensionFilter(null, "txt"));
                 int result = fileOpenDialog.showSaveDialog(frame);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    if (docksCollection.loadDocks(fileOpenDialog.getSelectedFile().getPath())) {
-                        JOptionPane.showMessageDialog(frame, "Док загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
-                        reloadLevels();
-                        frame.repaint();
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Док не загружен", "Результат", JOptionPane.ERROR_MESSAGE);
+                    try {
+                        if (docksCollection.loadDocks(fileOpenDialog.getSelectedFile().getPath())) {
+                            JOptionPane.showMessageDialog(frame, "Док загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                            logger.info("Из файла " + fileOpenDialog.getSelectedFile().getPath() + " был выгружен отдельный док");
+                            reloadLevels();
+                            frame.repaint();
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Некорректные данные", JOptionPane.ERROR_MESSAGE);
+                        logger.error(ex.getMessage());
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+                        logger.fatal(ex.getMessage());
                     }
+
                 }
             }
         });
@@ -235,6 +285,7 @@ public class FrameDocks {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
                 paintDocks.setDefinedDocks(listBoxDocks.getSelectedValue());
+                logger.info("Док " + listBoxDocks.getSelectedValue() + " выбран как текущий");
                 frame.repaint();
             }
         });

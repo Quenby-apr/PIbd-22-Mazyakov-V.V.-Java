@@ -57,7 +57,7 @@ public class Cruiser extends MilShip {
 
     }
 
-    public Cruiser (String info) {
+    public Cruiser(String info) {
         super(info);
         String[] strs = info.split(separator);
         if (strs.length == 9) {
@@ -89,7 +89,7 @@ public class Cruiser extends MilShip {
     }
 
     public String toString() {
-        return maxSpeed + separator + weight + separator + mainColor.getRGB() + separator +  dopColor.getRGB() + separator + missileSystem + separator + antiaircraftComplex + separator + controlSystem + separator + countCannon + separator + typeCannon;
+        return maxSpeed + separator + weight + separator + mainColor.getRGB() + separator + dopColor.getRGB() + separator + missileSystem + separator + antiaircraftComplex + separator + controlSystem + separator + countCannon + separator + typeCannon;
     }
 
     public void drawShip(Graphics g) {
