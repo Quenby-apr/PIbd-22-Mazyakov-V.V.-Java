@@ -1,6 +1,5 @@
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -14,8 +13,6 @@ import java.security.Provider;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
-
-
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class FrameDocks {
@@ -70,7 +67,6 @@ public class FrameDocks {
         addDock_button.setBounds(870, 100, 210, 20);
         listBoxDocks.setBounds(870, 130, 210, 150);
         removeDock_button.setBounds(870, 290, 210, 20);
-
 
         frame.getContentPane().add(CreateShip_button);
         frame.getContentPane().add(sortShip_button);
@@ -134,7 +130,7 @@ public class FrameDocks {
                     logger.info("Корабли в доке " + listBoxDocks.getSelectedValue() + " отсортированы");
             }
         });
-
+      
         moveToQueue_button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (!fieldIndex.getText().equals("")) {
