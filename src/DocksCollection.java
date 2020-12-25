@@ -52,8 +52,7 @@ public class DocksCollection {
             fileWriter.write("DocksCollection\n");
             for (Map.Entry<String, Docks<MilShip, IAddition>> level : docksStages.entrySet()) {
                 fileWriter.write("Dock" + separator + level.getKey() + "\n");
-                MilShip ship;
-                for (int i = 0; (ship = level.getValue().get(i)) != null; i++) {
+                for (MilShip ship : level.getValue()) {
                     if (ship.getClass().getSimpleName().equals("MilShip")) {
                         fileWriter.write("MilitaryShip" + separator);
                     } else if (ship.getClass().getSimpleName().equals("Cruiser")) {
@@ -158,7 +157,7 @@ public class DocksCollection {
                     }
                 }
             }
-        } catch (IOException | DocksOverflowException e) {
+        } catch (IOException | DocksOverflowException | DocksAlreadyHaveException e) {
             e.printStackTrace();
         }
         return true;
