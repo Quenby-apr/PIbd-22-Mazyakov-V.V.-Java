@@ -24,6 +24,7 @@ public class FrameDocks {
     private Queue<MilShip> shipQueue;
     private DocksCollection docksCollection;
     private JButton CreateShip_button = new JButton("Причалить корабль");
+    private JButton sortShip_button = new JButton("Сортировать");
     private JButton moveToQueue_button = new JButton("Поместить в очередь");
     private JButton takeFromQueue_button = new JButton("Взять из очереди");
     private JTextField fieldIndex = new JTextField("");
@@ -58,6 +59,7 @@ public class FrameDocks {
         frame.getContentPane().setLayout(null);
 
         CreateShip_button.setBounds(870, 30 + 300, 210, 20);
+        sortShip_button.setBounds(870, 30 + 330, 210, 20);
         moveToQueue_button.setBounds(870, 200 + 300, 210, 20);
         takeFromQueue_button.setBounds(870, 230 + 300, 210, 20);
         paintDocks.setBounds(0, 0, 860, 620);
@@ -71,6 +73,7 @@ public class FrameDocks {
 
 
         frame.getContentPane().add(CreateShip_button);
+        frame.getContentPane().add(sortShip_button);
         frame.getContentPane().add(moveToQueue_button);
         frame.getContentPane().add(takeFromQueue_button);
         frame.getContentPane().add(paintDocks);
@@ -108,7 +111,11 @@ public class FrameDocks {
                     } catch (DocksOverflowException ex) {
                         JOptionPane.showMessageDialog(frame, ex.getMessage(), "Док переполнен", JOptionPane.ERROR_MESSAGE);
                         logger.warn(ex.getMessage());
-                    } catch (Exception ex) {
+                    }catch (DocksAlreadyHaveException ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Дублирование", JOptionPane.ERROR_MESSAGE);
+                        logger.warn(ex.getMessage());
+                    }
+                    catch (Exception ex) {
                         JOptionPane.showMessageDialog(frame, ex.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
                         logger.fatal(ex.getMessage());
                     }
@@ -116,6 +123,17 @@ public class FrameDocks {
             }
         });
 
+        sortShip_button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                    if (listBoxDocks.getSelectedValue() == null) {
+                        JOptionPane.showMessageDialog(frame, "Док не выбран", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    docksCollection.get(listBoxDocks.getSelectedValue()).sort();
+                    frame.repaint();
+                    logger.info("Корабли в доке " + listBoxDocks.getSelectedValue() + " отсортированы");
+            }
+        });
 
         moveToQueue_button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

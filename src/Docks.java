@@ -1,14 +1,15 @@
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
-public class Docks<T extends ITransport, IAddition> {
+public class Docks<T extends ITransport, IAddition> implements Iterator<T>, Iterable<T> {
     private final List<T> places;
     private final int countPlaces;
     private final int pictureWidth;
     private final int pictureHeight;
     private final int placeSizeWidth = 280;
     private final int placeSizeHeight = 80;
+    private int currentIndex;
 
     public Docks(int picWidth, int picHeight) {
         this.pictureWidth = picWidth;
@@ -19,9 +20,12 @@ public class Docks<T extends ITransport, IAddition> {
         places = new ArrayList<>();
     }
 
-    public boolean add(T ship) throws DocksOverflowException {
+    public boolean add(T ship) throws DocksOverflowException, DocksAlreadyHaveException {
         if (places.size() >= countPlaces) {
             throw new DocksOverflowException();
+        }
+        if (places.contains(ship)) {
+            throw new DocksAlreadyHaveException();
         }
         places.add(ship);
         return true;
@@ -78,5 +82,27 @@ public class Docks<T extends ITransport, IAddition> {
 
     public void clearList() {
         places.clear();
+    }
+
+    public void sort() {
+        places.sort((Comparator<? super T>) new ShipComparer());
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        currentIndex = -1;
+        return this;
+    }
+    @Override
+    public boolean hasNext() {
+        return currentIndex < places.size() - 1;
+    }
+    @Override
+    public T next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+        currentIndex++;
+        return places.get(currentIndex);
     }
 }

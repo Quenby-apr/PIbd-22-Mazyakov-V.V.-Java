@@ -1,18 +1,26 @@
 import java.awt.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-public class MilShip extends Vehicle {
+public class MilShip extends Vehicle implements Comparable<MilShip>, Iterator<String>, Iterable<String> {
     protected int pictureWidth = 1010;
     protected int pictureHeight = 620;
+    private int currentIndex;
     protected final String separator = ";";
+    String[] strs = new String[3];
 
     public MilShip(int maxSpeed, float weight, Color mainColor) {
         this.maxSpeed = maxSpeed;
         this.weight = weight;
         this.mainColor = mainColor;
+        strs[0]=Integer.toString(maxSpeed);
+        strs[1]=Float.toString(weight);
+        int color=mainColor.getRGB();
+        strs[2]=Integer.toString(color);
     }
 
     public MilShip(String info) {
-        String[] strs = info.split(String.valueOf(separator));
+        strs= info.split(String.valueOf(separator));
         if (strs.length == 3) {
             maxSpeed = Integer.parseInt(strs[0]);
             weight = Float.parseFloat(strs[1]);
@@ -86,5 +94,70 @@ public class MilShip extends Vehicle {
                 }
                 break;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof MilShip)){
+            return false;
+        }
+        MilShip ship = (MilShip) o;
+        return equals(ship);
+    }
+
+    public boolean equals(MilShip other) {
+        if (other == null) {
+            return false;
+        }
+        if (!this.getClass().getSimpleName().equals(other.getClass().getSimpleName())) {
+            return false;
+        }
+        if (maxSpeed != other.maxSpeed) {
+            return false;
+        }
+        if (weight != other.weight) {
+            return false;
+        }
+        if (mainColor != other.mainColor) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int compareTo(MilShip truck) {
+        if (maxSpeed != truck.maxSpeed) {
+            return Integer.compare(maxSpeed, truck.maxSpeed);
+        }
+        if (weight != truck.weight) {
+            return Float.compare(weight, truck.weight);
+        }
+        if (mainColor != truck.mainColor) {
+            return Integer.compare(mainColor.getRGB(), truck.getMainColor().getRGB());
+        }
+        return 0;
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        currentIndex = -1;
+        return this;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return currentIndex < strs.length-1;
+    }
+
+    @Override
+    public String next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+        currentIndex++;
+        return strs[currentIndex];
     }
 }
